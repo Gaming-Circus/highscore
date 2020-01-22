@@ -1,0 +1,97 @@
+@import
+    'node_modules/nes.css/scss/nes',
+    'node_modules/normalize-scss/sass/normalize',
+    'node_modules/reflex-grid/scss/reflex';
+
+@font-face {
+    font-family: 'Press Start 2P';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../fonts/PressStart2P-Regular.ttf') format('truetype');
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: 'Press Start 2P', cursive;
+    margin: 0;
+    background: black;
+    color: white;
+}
+
+.highscore {
+    max-width: 960px;
+    margin: 0 auto;
+    height: 100%;
+
+    &__header {
+        height: 15%;
+    }
+
+    &__h1 {
+        padding-top: 1em;
+    }
+
+    &__h1, &__h2 {
+        text-align: center;
+    }
+
+    &__rogue {
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        margin-left: -240px;
+    }
+
+    &__main {
+        height: 85%;
+    }
+
+    &__data {
+        position: relative;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+    }
+
+    &__data-blob {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        transition: top 0.5s linear;
+    }
+
+    &__name, &__time {
+        display: inline-block;
+    }
+
+    &__time {
+        transition: color 0.5s linear;
+    }
+
+    &__name {
+        padding-left: 15px;
+    }
+
+    &__icon {
+        display: inline-block;
+        float: right;
+        margin: -5px;
+        animation: pop 1s linear;
+    }
+
+    &__inner {
+        background-color: #fff;
+        padding: 10px;
+    }
+}
+
+@keyframes pop {
+   0% { transform: scale(1); }
+   50% { transform: scale(2); }
+   100% { transform: scaleX(1); }
+}

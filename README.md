@@ -1,2 +1,5 @@
-# highscore
-Electron App for a Pixel Stopwatch and a Highscore for an Event 
+# Highscore
+
+Pixel Stopwatch with a Highscore for our Events
+
+![Demo](https://github.com/Gaming-Circus/highscore/blob/master/demo.gif)

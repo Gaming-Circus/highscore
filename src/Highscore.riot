@@ -1,0 +1,243 @@
+<highscore>
+    <div class="highscore">
+        <header class="highscore__header">
+            <h1 class="highscore__h1">
+                Dungeon
+            </h1>
+            <h2 class="highscore__h2">
+                Highscore
+            </h2>
+            <img class="highscore__rogue" src="gifs/rogue.gif" />
+        </header>
+        <main class="highscore__main">
+            <ul class="highscore__data">
+                <li each={ player in state.players } class="highscore__data-blob" style={ getPosition(player) }>
+                    <div class="nes-container is-rounded is-dark highscore__inner">
+                        <div class={ getHighscoreTimerClasses(player) }>
+                            <span class="highscore__time-number highscore__time-number--minutes">{ parseTime(player.timer[0]) }</span>
+                            <span class="highscore__time-divider">:</span>
+                            <span class="highscore__time-number highscore__time-number--seconds">{ parseTime(player.timer[1]) }</span>
+                            <span class="highscore__time-divider">:</span>
+                            <span class="highscore__time-number highscore__time-number--milliseconds">{ parseTime(player.timer[2]) }</span>
+                        </div>
+                        <div class="highscore__name">
+                            - { player.name }
+                        </div>
+                        <div if={ player.order === 0 } class="highscore__icon">
+                            <i class="nes-icon trophy"></i>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </main>
+        <audio class="start">
+	       <source src="audio/start.wav"></source>
+        </audio>
+        <audio class="win">
+	       <source src="audio/win.wav"></source>
+        </audio>
+        <audio class="game-over">
+	       <source src="audio/game_over.wav"></source>
+        </audio>
+    </div>
+    <script>
+
+        // pouchdb
+        import PouchDB from 'pouchdb';
+        import clone from 'lodash.clone';
+        import { getName } from 'ikea-name-generator';
+        import nanoid from 'nanoid';
+
+        // adding db
+        const pouchDB = new PouchDB('rush');
+
+        /**
+         *  highscore.riot
+         *
+         *  @author Björn Hase
+         *  @license http://opensource.org/licenses/MIT The MIT License
+         *  @link https://gitlab.tentakelfabrik.de/tentakelfabrik/tiny-components/tiny-consent Gitlab Repository
+         *
+         */
+
+         export default {
+
+             /**
+              *
+              *
+              */
+             state: {
+                players: [
+
+                ],
+                timer: undefined,
+                now: undefined,
+                isRunning: false,
+                count: 11
+             },
+
+             getHighscoreTimerClasses(player) {
+
+                const classes = [
+                    'highscore__time', 'nes-text'
+                ];
+
+                if (player.isCurrent === true) {
+                    classes.push('is-error');
+                }
+
+                if (player.isLast === true) {
+                    classes.push('is-success');
+                }
+
+                return classes.join(' ');
+             },
+
+             /**
+              *
+              *
+              *  @param  object player
+              *  @return string
+              */
+             getPosition(player)
+             {
+                const height = (100 / this.state.count);
+
+                return this.styles({
+                    top: (height * player.order) + '%',
+                    height: height + '%'
+                });
+             },
+
+             /**
+              *
+              *
+              */
+             parseTime(time) {
+
+                if (time < 10) {
+                    time = '0' + parseInt(time);
+                }
+
+                return time;
+             },
+
+             /**
+              *
+              *
+              */
+             onMounted() {
+                document.addEventListener('keyup', (event) => {
+                    if (event.keyCode === 32) {
+                        this.handleStart(event);
+                    }
+                });
+             },
+
+             timer(timer) {
+                return  (timer[0] * 10000) + (timer[1] * 100) + (timer[2]);
+             },
+
+             /**
+              *
+              *  @return {[type]} [description]
+              */
+             onBeforeUpdate() {
+
+                // clone players
+                const players = clone(this.state.players);
+
+                // sorting players with timer
+                players.sort((a, b) => {
+                    return this.timer(a.timer) > this.timer(b.timer);
+                });
+
+                // adding new order to state.players
+                this.state.players.forEach((playerA, indexA) => {
+                    players.forEach((playerB, indexB) => {
+                        if (playerA.id === playerB.id) {
+
+                            // if current player has changed order and is not shifted to start position play sound
+                            if (playerA.isCurrent && playerA.order !== indexB && indexB !== 0) {
+                                this.$('audio.game-over').play();
+                            }
+
+                            this.state.players[indexA].order = indexB;
+                        }
+                    });
+                });
+             },
+
+             /**
+              *
+              *
+              */
+             handleStart(event) {
+                event.preventDefault();
+
+                const player = {
+                    id: nanoid(),
+                    name: getName(),
+                    timer: [0, 0, 0],
+                    order: this.state.players.length,
+                    isCurrent: true
+                };
+
+                if (this.state.isRunning === true) {
+
+                    this.state.players.forEach((p, i) => {
+                        if (p.isCurrent === true) {
+                            this.state.players[i].isCurrent = false;
+                            this.state.players[i].isLast = true;
+                        } else {
+                            this.state.players[i].isLast = false;
+                        }
+                    });
+
+                    // stop timer
+                    this.state.isRunning = false;
+                    clearInterval(this.state.timer);
+
+
+                    // if current length higher or same as count, get highest order and delete
+                    if (this.state.players.length >= this.state.count) {
+                        for (let i = 0; i < this.state.players.length; i++) {
+                            if (this.state.players[i].order >= (this.state.players.length - 1)) {
+                                this.state.players.splice(i, 1);
+                                break;
+                            }
+                        }
+                    }
+
+                    this.update();
+
+                    return;
+                }
+
+                this.state.isRunning = true;
+                this.state.players.unshift(player);
+
+                this.$('audio.start').play();
+
+                // start interval, every 10ms raise ms
+                this.state.timer = setInterval(() => {
+                    player.timer[2]++;
+
+                    if (player.timer[2] >= 100) {
+                        player.timer[1]++;
+                        player.timer[2] = 0;
+                    }
+
+                    if (player.timer[1] >= 60) {
+                        player.timer[0]++;
+                        player.timer[1] = 0;
+                    }
+
+                    this.update();
+                }, 10);
+             }
+
+        }
+
+    </script>
+</highscore>
