@@ -4,6 +4,7 @@
     "/dist/fonts/PressStart2P-Regular.ttf": "/dist/fonts/PressStart2P-Regular.ttf",
     "/dist/audio/game_over.wav": "/dist/audio/game_over.wav",
     "/dist/audio/start.wav": "/dist/audio/start.wav",
+    "/dist/audio/title.mp3": "/dist/audio/title.mp3",
     "/dist/audio/win.wav": "/dist/audio/win.wav",
     "/dist/gifs/rogue.gif": "/dist/gifs/rogue.gif"
 }

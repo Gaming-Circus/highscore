@@ -30,6 +30,9 @@
                 </li>
             </ul>
         </main>
+        <audio class="title">
+	       <source src="audio/title.mp3" loop></source>
+        </audio>
         <audio class="start">
 	       <source src="audio/start.wav"></source>
         </audio>
@@ -132,6 +135,13 @@
                         this.handleStart(event);
                     }
                 });
+
+                this.$('header').click();
+
+                const audio = this.$('audio.title');
+
+                audio.volume = 0.5;
+                audio.play();
              },
 
              timer(timer) {

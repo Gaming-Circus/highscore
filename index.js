@@ -25,6 +25,8 @@ app.setName(appName);
 const appData = app.getPath('appData');
 app.setPath('userData', path.join(appData, appName));
 
+app.commandLine.appendSwitch('--autoplay-policy','no-user-gesture-required')
+
 /**
  *
  *
