@@ -12,7 +12,7 @@
     "@riotjs/compiler": "^4.5.5",
     "@riotjs/webpack-loader": "^4.0.1",
     "cross-env": "^5.2.0",
-    "electron": "^3.1.9",
+    "electron": "^7.2.4",
     "laravel-mix": "^5.0.0",
     "sass": "^1.20.1",
     "sass-loader": "^7.1.0",
