@@ -22,7 +22,7 @@
   "dependencies": {
     "electron-connect": "^0.6.3",
     "ikea-name-generator": "^1.0.3",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "lodash.clone": "^4.5.0",
     "moment": "^2.24.0",
     "nanoid": "^2.1.9",
